@@ -9,11 +9,11 @@ function PaymentPage() {
         const formData = {
             appId: "351920d27c46526be724da7cb29153",
             secretKey:"c125df6971e7bda4f257e698e085092f7cf2f357",
-            orderId:"12324156aaqasa111f1a1a1a1asasf",
+            orderId:"123124156aaqasa1111f1a1a1a1asasf",
             customerEmail:"dj@gmail.com",
             customerPhone:"9033196940",
             orderAmount:"1",
-            returnUrl: 'http://localhost:3000/paymentConfirmation',
+            returnUrl: 'https://us-central1-api-function-webapp.cloudfunctions.net/apiv1/paymentConfirmation',
             notifyUrl: ''
         }
 

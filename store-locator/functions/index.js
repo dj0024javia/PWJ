@@ -83,7 +83,7 @@ app.get('/', (req, res) => res.status(200).send("Hello, it works!!"))
 // Message Sync Api
 // app.get()
 
-app.get('/paymentConfirmation', (req, res) => {
+app.post('/paymentConfirmation', (req, res) => {
     console.log("Response Received from CASHFREE::", req)
     res.status(201).send("OK")
 })
