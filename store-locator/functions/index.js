@@ -9,6 +9,7 @@ const axios = require("axios");
 const cors = require('cors');
 // import Users from './dbUsers.js'
 const crypto = require('crypto');
+const { url } = require('inspector');
 // const request = require('request-promise');
 
 // App config
@@ -84,8 +85,84 @@ app.get('/', (req, res) => res.status(200).send("Hello, it works!!"))
 // app.get()
 
 app.post('/paymentConfirmation', (req, res) => {
-    console.log("Response Received from CASHFREE::", req)
-    res.status(201).send("OK")
+
+    //     No payments attempted against an order :
+    // {
+    //     "orderStatus": "ACTIVE",
+    //     "status": "OK"
+    // }
+
+
+    //     Unsuccessful payment attempt against an order:
+    // txStatus would be CANCELLED in the below response if a user lands on the payment page and clicks on 'back to merchant' instead of selecting a payment mode and proceeding with the transaction.
+
+
+    // {
+    //     "orderStatus": "ACTIVE",
+    //     "txStatus": "PENDING",
+    //     "txTime": "2018-03-29 15:33:42",
+    //     "txMsg": null,
+    //     "referenceId": "2610",
+    //     "paymentMode": "NET_BANKING",
+    //     "orderCurrency": "INR",
+    //     "paymentDetails": {
+    //         "paymentMode": "NET_BANKING",
+    //         "bankName": "Yes Bank Ltd"
+    //     },
+    //     "status": "OK"
+    // }
+    // Succesful payment made against an order:
+    // {
+    //     "orderStatus": "PAID",
+    //     "txStatus": "SUCCESS",
+    //     "txTime": "2017-05-08 20:35:11",
+    //     "txMsg": "transaction successful",
+    //     "referenceId": "2602",
+    //     "paymentMode": "AIRTEL_MONEY",
+    //     "orderCurrency": "INR",
+    //     "status": "OK"
+    // }
+    // Order status when a transaction gets FLAGGED and then goes to SUCCESS/CANCELLED.
+    // {
+    //      "orderStatus": "PROCESSED",
+    //     "txStatus": "FLAGGED",                     // This will get updated based on whether transaction was approved (SUCCESS) or rejected (CANCELLED)
+    //     "txTime": "2017-05-08 20:35:11",
+    //     "txMsg": "Transaction successful",
+    //     "referenceId": "2603",
+    //     "paymentMode": "CREDIT_CARD",
+    //     "orderCurrency": "INR",
+    //     "paymentDetails": {
+    //         "paymentMode": "CREDIT_CARD",
+    //         "cardNumber": "3400XXXXX0009",
+    //         "cardCountry": "IN",
+    //         "cardScheme": "AMEX"
+    //     },
+    //     "status": "OK"
+    // }
+
+
+    console.log("Response Received from CASHFREE::", req.body)
+    // console.log(res.body)
+    if (req.body.txStatus === 'SUCCESS') {
+
+        // res.status(201).send(req.body)
+        res.writeHead(301,
+            { Location: 'http://localhost:3000/paymentSuccess' }
+        );
+        res.write(JSON.stringify(req.body))
+        res.end();
+        // res.redirect("http://localhost:3000/paymentSuccess")
+    }
+    else if (req.body.txStatus === 'CANCELLED') {
+        res.status(202).send(req.body)
+    }
+    else if (req.body.txStatus === 'FLAGGED') {
+        res.status(203).send(req.body)
+    }
+    else if (req.body.txStatus === 'PENDING') {
+        res.status(204).send(req.body)
+    }
+
 })
 
 app.post('/reqURL', (request, response) => {
